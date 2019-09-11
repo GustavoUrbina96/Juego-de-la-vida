@@ -1,58 +1,62 @@
 function nextStep() {
-    let columns = 3;
-    let rows = 3;
-    let board = new Array(rows);
-    let boardTemp = new Array(rows);
-    const rowsLimit = rows;
-    const colsLimit = columns;
+    if(document.getElementsByTagName("table").length == 0){
+        alert("Por favor crea un tablero para poder continuar");
+        return;
+    }
+    let table = document.getElementsByTagName("table")[0];
+    let rows = table.rows;
+    const rowsLimit = document.getElementsByTagName("table")[0].rows.length;
+    const colsLimit = rows[rowsLimit - 1].childElementCount;
+    let board = new Array(rowsLimit);
+    let boardTemp = new Array(rowsLimit);
 
 
     for (let r = 0; r < board.length; r++) {
-        board[r] = new Array(columns);
+        board[r] = new Array(colsLimit);
+        boardTemp[r] = new Array(colsLimit);
     }
-
-    for (let r = 0; r < boardTemp.length; r++) {
-        boardTemp[r] = new Array(columns);
-    }
-    
 
     //Estado inicial
     for (let r = 0; r < board.length; r++) {
         for (let c = 0; c < board[r].length; c++) {
-            if ((r == 0 && c == 1) || (r == 1 && c == 0) || (r == 2 && c == 1))
-                board[r][c] = "V";
-            else
-                board[r][c] = "M";
+
+            let classCell = rows[r].cells[c].className; //Get nameClass "Live" or "Dead"
+            board[r][c] = classCell == "Dead" ? "D" : "L";
         }
     }
-
-
-
-   
 
     for (let row = 0; row < board.length; row++) {
         for (let col = 0; col < board[row].length; col++) {
             let cellNow = board[row][col];
             let neighbours = [];
             let newStateCellNow;
-            neighbours.push(col + 1 == colsLimit ? board[row][0] : board[row][col + 1]);
-            neighbours.push(col == 0 ? board[row][colsLimit - 1] : board[row][col - 1]);
-            neighbours.push(row == 0 ? board[rowsLimit - 1][col] : board[row - 1][col]);
-            neighbours.push(row + 1 == rowsLimit ? board[0][col] : board[row + 1][col]);
-            neighbours.push(getVecinoEsquinaInferiorDerecha(board, row, col, rowsLimit, colsLimit));
+            neighbours.push(col + 1 == colsLimit ? board[row][0] : board[row][col + 1]);//Derecha
+            neighbours.push(col == 0 ? board[row][colsLimit - 1] : board[row][col - 1]);//Izquierda
+            neighbours.push(row == 0 ? board[rowsLimit - 1][col] : board[row - 1][col]);//Arriba
+            neighbours.push(row + 1 == rowsLimit ? board[0][col] : board[row + 1][col]);//Abajo
             neighbours.push(getVecinoEsquinaSuperiorDerecha(board, row, col, rowsLimit, colsLimit));
             neighbours.push(getVecinoEsquinaSuperiorIzquierda(board, row, col, rowsLimit, colsLimit));
             neighbours.push(getVecinoEsquinaInferiorIzquierda(board, row, col, rowsLimit, colsLimit));
+            neighbours.push(getVecinoEsquinaInferiorDerecha(board, row, col, rowsLimit, colsLimit));
 
-            if (cellNow == "M")
+
+            if (cellNow == "D")
                 newStateCellNow = validationRule1(neighbours);
             else
                 newStateCellNow = validationRule2(neighbours);
 
-            boardTemp[row][col] = newStateCellNow ? "V" : "M";
+            boardTemp[row][col] = newStateCellNow ? "L" : "D";
         }
 
     }
+
+    //Save the new state
+    for (let r = 0; r < boardTemp.length; r++) {
+        for (let c = 0; c < boardTemp[r].length; c++) {
+            rows[r].cells[c].className = boardTemp[r][c] == "D" ? "Dead" : "Live"
+        }
+    }
+
 
     console.log(board);
     console.log(boardTemp);
@@ -61,7 +65,7 @@ function nextStep() {
 function validationRule2(neighbours) {
     let contLife = 0;
     neighbours.forEach(n => {
-        if (n == "V")
+        if (n == "L")
             contLife++;
     });
 
@@ -71,84 +75,34 @@ function validationRule2(neighbours) {
 function validationRule1(neighbours) {
     let contLife = 0;
     neighbours.forEach(n => {
-        if (n == "V")
+        if (n == "L")
             contLife++;
     });
 
     return contLife == 3 ? true : false;
 }
 
-function getVecinoEsquinaInferiorIzquierda(board, row, col, rowsLimit, colsLimit) {
-    var vecEsqSupL = null;
-    if (row > 0) {
-        if (col > 0)
-            vecEsqSupL = board[row - 1][col - 1];
-        else
-            vecEsqSupL = board[row - 1][colsLimit - 1];
-    }
-    else {
-        if (col > 0)
-            vecEsqSupL = board[rowsLimit - 1][col - 1];
-        else
-            vecEsqSupL = board[rowsLimit - 1][colsLimit - 1];
-    }
-
-    return vecEsqSupL;
-}
-
-
 function getVecinoEsquinaSuperiorIzquierda(board, row, col, rowsLimit, colsLimit) {
-    var vecEsqSupL = null;
-    if (row > 0) {
-        if (col > 0)
-            vecEsqSupL = board[row - 1][col - 1];
-        else
-            vecEsqSupL = board[row - 1][colsLimit - 1];
-    }
-    else {
-        if (col > 0)
-            vecEsqSupL = board[rowsLimit - 1][col - 1];
-        else
-            vecEsqSupL = board[rowsLimit - 1][colsLimit - 1];
-    }
-
-    return vecEsqSupL;
+    let newRow = row == 0 ? rowsLimit - 1 : row - 1;
+    let newCol = col == 0 ? colsLimit - 1 : col - 1;
+    return board[newRow][newCol];
 }
 
 function getVecinoEsquinaSuperiorDerecha(board, row, col, rowsLimit, colsLimit) {
-    var vecEsqSupR = null;
-    if (row > 0) {
-        if (col + 1 == colsLimit)
-            vecEsqSupR = board[row - 1][0];
-        else
-            vecEsqSupR = board[row - 1][col + 1];
-    }
-    else {
-        if (col + 1 == colsLimit)
-            vecEsqSupR = board[rowsLimit - 1][0];
-        else
-            vecEsqSupR = board[rowsLimit - 1][col + 1];
-    }
-
-    return vecEsqSupR;
+    let newRow = row == 0 ? rowsLimit - 1 : row - 1;
+    let newCol = col + 1 == colsLimit ? 0 : col + 1;
+    return board[newRow][newCol];
 }
 
+function getVecinoEsquinaInferiorIzquierda(board, row, col, rowsLimit, colsLimit) {
+    let newRow = row + 1 == rowsLimit ? 0 : row + 1;
+    let newCol = col == 0 ? colsLimit - 1 : col - 1;
+    return board[newRow][newCol];
+}
 function getVecinoEsquinaInferiorDerecha(board, row, col, rowsLimit, colsLimit) {
-    var vecEsqInfR = null;
-    if (row + 1 == rowsLimit) {
-        if (col + 1 == colsLimit)
-            vecEsqInfR = board[0][0];
-        else
-            vecEsqInfR = board[0][col + 1];
-    }
-    else {
-        if (col + 1 == colsLimit)
-            vecEsqInfR = board[row + 1][0];
-        else
-            vecEsqInfR = board[row + 1][col + 1];
-    }
-
-    return vecEsqInfR;
+    let newRow = row + 1 == rowsLimit ? 0 : row + 1;
+    let newCol = col + 1 == colsLimit ? 0 : col + 1;
+    return board[newRow][newCol];
 }
 
 

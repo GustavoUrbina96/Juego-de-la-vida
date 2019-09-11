@@ -16,7 +16,7 @@ function createBoard(){
     let tblBody = document.createElement("tbody");
 
     for (let i = 0; i < rows; i++) {
-        //crear las ileras
+        
         var tr = document.createElement("tr");
 
         for (let j = 0; j < columns; j++) {
