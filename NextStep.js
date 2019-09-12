@@ -3,6 +3,7 @@ function nextStep() {
         alert("Por favor crea un tablero para poder continuar");
         return;
     }
+
     let table = document.getElementsByTagName("table")[0];
     let rows = table.rows;
     const rowsLimit = document.getElementsByTagName("table")[0].rows.length;
@@ -56,9 +57,6 @@ function nextStep() {
             rows[r].cells[c].className = boardTemp[r][c] == "D" ? "Dead" : "Live"
         }
     }
-
-    console.log(board);
-    console.log(boardTemp);
 }
 
 
