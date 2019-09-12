@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='main.js'></script>
+    <script type="text/javascript" src="CreateBoard.JS"></script>
+    <script type="text/javascript" src="NextStep.js"></script>
+    <script src="Play.JS"></script>
+</head>
+
+<body>
+    <div>
+        <button>API</button>
+        <label>Rows</label>
+        <input type="number" name="Rows" id="Rows" value="3">
+        <label>Colums</label>
+        <input type="number" name="Colums" id="Colums" value="3">
+        <button onclick="createBoard()">Create board</button>
+        <button onclick="nextStep()">Next Step <i class="fa fa-step-forward"></i></button>
+        <button onclick="play()" id="play" style="display: inline-block;"><i class="fa fa-play"></i></button>
+        <button onclick="play()" id="stop" style="display: none"><i class="fa fa-pause"></i></button>
+    </div>
+    <br><br>
+    <div class="board" id="Board"></div>
+</body>
+
+</html>
+<style>
+    .board {
+        margin-left: 5%;
+    }
+
+    .Live {
+        background-color: black;
+    }
+
+    .Dead {
+        background-color: white;
+    }
+</style>
